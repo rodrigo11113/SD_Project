@@ -1,5 +1,11 @@
 package edu.ufp.inf.sd.rmi.project.server;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import edu.ufp.inf.sd.rmi._01_helloworld.server.HelloWorldImpl;
 import edu.ufp.inf.sd.rmi._01_helloworld.server.HelloWorldRI;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
@@ -7,6 +13,7 @@ import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.Properties;
@@ -122,5 +129,38 @@ public class GameServer {
         FileOutputStream out = new FileOutputStream("defaultproperties2.txt");
         props.store(out, "---No Comment---");
         out.close();
+    }
+    public static String giveToken(String userName){
+        String token = new String("");
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("secret");
+            token = JWT.create()
+                    .withIssuer(userName)
+                    .sign(algorithm);
+
+             } catch (JWTCreationException exception){
+            //Invalid Signing configuration / Couldn't convert Claims.
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return token;
+    }
+    public static boolean verificaToken(String token,String userName){
+        DecodedJWT jwt = null;
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("secret"); //use more secure key
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(userName)
+                    .build(); //Reusable verifier instance
+            jwt = verifier.verify(token);
+            System.out.println(jwt.getToken());
+        } catch (JWTVerificationException | UnsupportedEncodingException exception){
+            //Invalid signature/claims
+        }
+        assert jwt != null;
+        if(jwt.getToken().equals(token)){
+            return true;
+        }
+        return false;
     }
 }

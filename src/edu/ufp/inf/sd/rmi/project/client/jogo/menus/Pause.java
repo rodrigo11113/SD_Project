@@ -3,8 +3,10 @@ package edu.ufp.inf.sd.rmi.project.client.jogo.menus;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import javax.swing.JButton;
 import edu.ufp.inf.sd.rmi.project.client.jogo.engine.Game;
+import edu.ufp.inf.sd.rmi.project.server.State;
 
 /**
  * This is the pause menu that is pulled up when you press the Enter button in game.
@@ -54,9 +56,20 @@ public class Pause implements ActionListener {
 			MenuHandler.CloseMenu();
 			Game.gui.LoginScreen();
 		}
-		else if (s==EndTurn) {
-			MenuHandler.CloseMenu();
-			Game.btl.EndTurn();
+		else if (s==EndTurn) {//endturn
+			State state = null;
+			try {
+				state = new State(Game.observer.getId(),"end turn");
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			try {
+				Game.subject.setState(state);
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			/*MenuHandler.CloseMenu();
+			Game.btl.EndTurn();*/
 		}
 		else if (s==Resume) {MenuHandler.CloseMenu();}
 		else if (s==Save) {Game.save.SaveGame();}

@@ -1,11 +1,16 @@
 package edu.ufp.inf.sd.rmi.project.client.jogo.engine;
 
+import edu.ufp.inf.sd.rmi.project.server.State;
+import edu.ufp.inf.sd.rmi.project.server.SubjectImpl;
+import edu.ufp.inf.sd.rmi.project.server.SubjectRI;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.rmi.RemoteException;
 
 /**
  * Keyboard handling for the game along with the mouse setup for game handling.
@@ -29,10 +34,10 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 	private final int exit = KeyEvent.VK_ESCAPE;
 	
 	//Movement buttons
-	private final int up = KeyEvent.VK_UP;
-	private final int down = KeyEvent.VK_DOWN;
-	private final int left = KeyEvent.VK_LEFT;
-	private final int right = KeyEvent.VK_RIGHT;
+	private final int up = KeyEvent.VK_W;
+	private final int down = KeyEvent.VK_S;
+	private final int left = KeyEvent.VK_A;
+	private final int right = KeyEvent.VK_D;
 
 	//Command buttons
 	private final int select = KeyEvent.VK_Z;
@@ -42,10 +47,11 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 	//Mouse (right/left clicks)
 	private final int main = MouseEvent.BUTTON1;
 	private final int alt = MouseEvent.BUTTON1;
-	
-	public InputHandler() {
+	SubjectRI subject;
+	public InputHandler(SubjectRI subjectri) {
 		Game.gui.addKeyListener(this);
 		Game.gui.addMouseListener(this);
+		subject=subjectri;
 	}
 
 	int DevPathing = 1;
@@ -55,44 +61,341 @@ public class InputHandler implements KeyListener,MouseListener,ActionListener {
 		if (Game.GameState==Game.State.PLAYING) {
 			edu.ufp.inf.sd.rmi.project.client.jogo.players.Base ply = Game.player.get(Game.btl.currentplayer);
 			
-			if (i==up) {ply.selecty--;if (ply.selecty<0) {ply.selecty++;}}
-			else if (i==down) {ply.selecty++;if (ply.selecty>=Game.map.height) {ply.selecty--;}}
-			else if (i==left) {ply.selectx--;if (ply.selectx<0) {ply.selectx++;}}
-			else if (i==right) {ply.selectx++;if (ply.selectx>=Game.map.width) {ply.selectx--;}}
-			else if (i==select) {Game.btl.Action();}
-			else if (i==cancel) {Game.player.get(Game.btl.currentplayer).Cancle();}
-			else if (i==start) {new edu.ufp.inf.sd.rmi.project.client.jogo.menus.Pause();}
+			if (i==up) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"up play");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+
+				//ply.selecty--;if (ply.selecty<0) {ply.selecty++;
+				}
+			else if (i==down) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"down play");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//ply.selecty++;if (ply.selecty>=Game.map.height) {ply.selecty--;}
+				}
+			else if (i==left) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"left play");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//ply.selectx--;if (ply.selectx<0) {ply.selectx++;}
+				}
+			else if (i==right) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"right play");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//ply.selectx++;if (ply.selectx>=Game.map.width) {ply.selectx--;}
+				}
+			else if (i==select) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"select play");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.btl.Action();
+				}
+			else if (i==cancel) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"cancel play");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.player.get(Game.btl.currentplayer).Cancle();
+			}
+			else if (i==start) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"start play");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//new edu.ufp.inf.sd.rmi.project.client.jogo.menus.Pause();
+			}
 		}
 		if (Game.GameState==Game.State.EDITOR) {
-			if (i==up) {Game.edit.selecty--;if (Game.edit.selecty<0) {Game.edit.selecty++;} Game.edit.moved = true;}
-			else if (i==down) {Game.edit.selecty++;if (Game.edit.selecty>=Game.map.height) {Game.edit.selecty--;} Game.edit.moved = true;}
-			else if (i==left) {Game.edit.selectx--;if (Game.edit.selectx<0) {Game.edit.selectx++;} Game.edit.moved = true;}
-			else if (i==right) {Game.edit.selectx++;if (Game.edit.selectx>=Game.map.width) {Game.edit.selectx--;} Game.edit.moved = true;}
-			else if (i==select) {Game.edit.holding = true;}
-			else if (i==cancel) {Game.edit.ButtButton();}
+			if (i==up) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"up  edit");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.edit.selecty--;if (Game.edit.selecty<0) {Game.edit.selecty++;} Game.edit.moved = true;
+			}
+			else if (i==down) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"down  edit");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.edit.selecty++;if (Game.edit.selecty>=Game.map.height) {Game.edit.selecty--;} Game.edit.moved = true;
+			}
+			else if (i==left) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"left  edit");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.edit.selectx--;if (Game.edit.selectx<0) {Game.edit.selectx++;} Game.edit.moved = true;
+			}
+			else if (i==right) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"right  edit");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.edit.selectx++;if (Game.edit.selectx>=Game.map.width) {Game.edit.selectx--;} Game.edit.moved = true;
+			}
+			else if (i==select) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"select  edit");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.edit.holding = true;
+				}
+			else if (i==cancel) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"cancel  edit");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.edit.ButtButton();
+			}
 			else if (i==start) {
-				new edu.ufp.inf.sd.rmi.project.client.jogo.menus.EditorMenu();
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"start  edit");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//new edu.ufp.inf.sd.rmi.project.client.jogo.menus.EditorMenu();
 			}
 		}
 		
-		if (i==dev1) {Game.gui.LoginScreen();}
-		else if (i==dev2) {Game.load.LoadTexturePack("Test");}
+		if (i==dev1) {
+			State state= null;
+			try {
+				state = new State(Game.observer.getId(),"dev1");
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			try {
+				subject.setState(state);
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			//Game.gui.LoginScreen();
+			}
+		else if (i==dev2) {
+			State state= null;
+			try {
+				state = new State(Game.observer.getId(),"dev2");
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			try {
+				subject.setState(state);
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			//Game.load.LoadTexturePack("Test");
+			}
 		else if (i==dev3) {
 			DevPathing++;
 			switch (DevPathing) {
-				case 1:Game.pathing.ShowCost=false;break;
-				case 2:Game.pathing.ShowHits=true;break;
-				case 3:Game.pathing.ShowHits=false;Game.pathing.ShowCost=true;DevPathing=0;break;
+
+				case 1://Game.pathing.ShowCost=false;
+					State state= null;
+					try {
+						state = new State(Game.observer.getId(),"dev3 1");
+					} catch (RemoteException remoteException) {
+						remoteException.printStackTrace();
+					}
+					try {
+						subject.setState(state);
+					} catch (RemoteException remoteException) {
+						remoteException.printStackTrace();
+					}
+				break;
+				case 2://Game.pathing.ShowHits=true;
+					State state1= null;
+					try {
+						state1 = new State(Game.observer.getId(),"dev3 2");
+					} catch (RemoteException remoteException) {
+						remoteException.printStackTrace();
+					}
+					try {
+						subject.setState(state1);
+					} catch (RemoteException remoteException) {
+						remoteException.printStackTrace();
+					}
+				break;
+				case 3:
+					State state3= null;
+					try {
+						state3 = new State(Game.observer.getId(),"dev3 3");
+					} catch (RemoteException remoteException) {
+						remoteException.printStackTrace();
+					}
+					try {
+						subject.setState(state3);
+					} catch (RemoteException remoteException) {
+						remoteException.printStackTrace();
+					}
+					//Game.pathing.ShowHits=false;Game.pathing.ShowCost=true;DevPathing=0;
+					break;
 			}
 		}
-		else if (i==dev4) {Game.btl.EndTurn();}
-		else if (i==dev5) {Game.player.get(Game.btl.currentplayer).npc = !Game.player.get(Game.btl.currentplayer).npc; Game.btl.EndTurn();}
-		else if (i==dev6) {new edu.ufp.inf.sd.rmi.project.client.jogo.menus.StartMenu();}
+		else if (i==dev4) {
+			State state= null;
+			try {
+				state = new State(Game.observer.getId(),"dev4");
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			try {
+				subject.setState(state);
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			//Game.btl.EndTurn();
+		}
+		else if (i==dev5) {
+			State state= null;
+			try {
+				state = new State(Game.observer.getId(),"dev5");
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			try {
+				subject.setState(state);
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			//Game.player.get(Game.btl.currentplayer).npc = !Game.player.get(Game.btl.currentplayer).npc; Game.btl.EndTurn();
+		}
+		else if (i==dev6) {
+			State state= null;
+			try {
+				state = new State(Game.observer.getId(),"dev6");
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			try {
+				subject.setState(state);
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			//new edu.ufp.inf.sd.rmi.project.client.jogo.menus.StartMenu();
+		}
 	}
 	public void keyReleased(KeyEvent e) {
 		int i=e.getKeyCode();
 		if (Game.GameState==Game.State.EDITOR) {
-			if (i==select) {Game.edit.holding = false;}
+			if (i==select) {
+				State state= null;
+				try {
+					state = new State(Game.observer.getId(),"edit");
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				try {
+					subject.setState(state);
+				} catch (RemoteException remoteException) {
+					remoteException.printStackTrace();
+				}
+				//Game.edit.holding = false;
+				}
 		}
 	}
 	public void keyTyped(KeyEvent arg0) {}

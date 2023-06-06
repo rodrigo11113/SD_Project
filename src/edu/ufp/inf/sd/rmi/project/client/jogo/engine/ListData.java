@@ -1,5 +1,10 @@
 package edu.ufp.inf.sd.rmi.project.client.jogo.engine;
 
+import edu.ufp.inf.sd.rmi.project.server.State;
+import edu.ufp.inf.sd.rmi.project.server.SubjectRI;
+
+import java.rmi.RemoteException;
+
 /**
  * When adding a new commander, building, or unit to the game, just add the class to the Create#### switch.
  * Load#### creates a unit, commander, city and then sets its properties to match its state when you saved the game.
@@ -8,9 +13,12 @@ package edu.ufp.inf.sd.rmi.project.client.jogo.engine;
  * @author SergeDavid
  * @version 0.2
  */
+
 public class ListData {
+	SubjectRI subject;
 	/**Starting ListData() will load all of the commanders, edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings, and edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.units into reference lists (display#) for use in menu's.*/
-	public ListData() {
+	public ListData(SubjectRI subjectri) {
+		subject=subjectri;
 		//These loop for a max of 100 items (shouldn't hit that high), a null return from Create###(); will end the loop.
 		for (int i=0; i<100 ;i++) {
 			Game.displayC.add(CreateCommander(i, 0, 0, false));
@@ -59,17 +67,51 @@ public class ListData {
 	 * @param type = The building to be created in question.
 	 * @returnIt should never return null except for the reference list [ListData();]
 	 * 
-	 * @exception WARNING: removed the filter for proper owner edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.
+	 //* @exception WARNING: removed the filter for proper owner edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.
 	 */
 	public edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Base CreateCity(int owner, int xx, int yy, int type) {//15 = Neutral, 12, 13, 14 are unused. (12 max edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.players)
 		//TODO: Warning: I removed the check to make sure each building is legal.
 		System.out.println("List level owner: " + owner);
 		switch (type) {
-			case 0:return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Capital(owner, xx, yy);
-			case 1:return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Town(owner, xx, yy);
-			case 2:return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Barracks(owner, xx, yy);
-			case 3:return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Airport(owner, xx, yy);
-			case 4:return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Shipyard(owner, xx, yy);
+			case 0:/*State state=new State(Game.btl.currentplayer,("capital,"+owner+","+xx+","+yy));
+				try {
+					subject.setState(state);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Capital(owner, xx, yy);
+			case 1:/*State state1=new State(Game.btl.currentplayer,("town,"+owner+","+xx+","+yy));
+				try {
+					subject.setState(state1);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Town(owner, xx, yy);
+
+			case 2:/*State state2=new State(Game.btl.currentplayer,("baracks,"+owner+","+xx+","+yy));
+				try {
+					subject.setState(state2);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Barracks(owner, xx, yy);
+
+			case 3:/*State state3=new State(Game.btl.currentplayer,("airport,"+owner+","+xx+","+yy));
+				try {
+					subject.setState(state3);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Airport(owner, xx, yy);
+
+			case 4:/*State state4=new State(Game.btl.currentplayer,("shypyard,"+owner+","+xx+","+yy));
+				try {
+					subject.setState(state4);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Shipyard(owner, xx, yy);
+
 		}
 		return null;
 	}
@@ -84,11 +126,46 @@ public class ListData {
 	 */
 	public edu.ufp.inf.sd.rmi.project.client.jogo.units.Base CreateUnit(int type, int owner, int xx, int yy, boolean active) {
 		switch (type) {
-			case 0:return new edu.ufp.inf.sd.rmi.project.client.jogo.units.Infantry(owner, xx, yy, active);
-			case 1:return new edu.ufp.inf.sd.rmi.project.client.jogo.units.Mechanic(owner, xx, yy, active);
-			case 2:return new edu.ufp.inf.sd.rmi.project.client.jogo.units.SmallTank(owner, xx, yy, active);
-			case 3:return new edu.ufp.inf.sd.rmi.project.client.jogo.units.Artillery(owner, xx, yy, active);
-			case 4:return new edu.ufp.inf.sd.rmi.project.client.jogo.units.Helecopter(owner, xx, yy, active);
+			case 0:/*State state=new State(Game.btl.currentplayer,("infantry,"+owner+","+xx+","+yy+","+active));
+				try {
+					subject.setState(state);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.units.Infantry(owner, xx, yy, active);
+
+			case 1:/*State state1=new State(Game.btl.currentplayer,("mechanic,"+owner+","+xx+","+yy+","+active));
+				try {
+					subject.setState(state1);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.units.Mechanic(owner, xx, yy, active);
+
+			case 2:/*State state2=new State(Game.btl.currentplayer,("smalltank,"+owner+","+xx+","+yy+","+active));
+				try {
+					subject.setState(state2);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.units.SmallTank(owner, xx, yy, active);
+
+			case 3:/*State state3=new State(Game.btl.currentplayer,("artillery,"+owner+","+xx+","+yy+","+active));
+				try {
+					subject.setState(state3);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.units.Artillery(owner, xx, yy, active);
+				//break;
+			case 4:/*State state4=new State(Game.btl.currentplayer,("helecopter,"+owner+","+xx+","+yy+","+active));
+				try {
+					subject.setState(state4);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}*/
+				return new edu.ufp.inf.sd.rmi.project.client.jogo.units.Helecopter(owner, xx, yy, active);
+
 		}
 		return null;
 	}

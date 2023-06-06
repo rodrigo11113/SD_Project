@@ -27,11 +27,11 @@
 @set JAVAPROJ=%WORKDRIVE%:\\Users\\%USERNAME%\\IdeaProjects\\%JAVAPROJ_NAME%
 @Set RABBITMQ_SERVICES_FOLDER=edu/ufp/inf/sd/rabbitmqservices
 @Set RABBITMQ_SERVICES_PACKAGE=edu.ufp.inf.sd.rabbitmqservices
-@Set PACKAGE=_04_topics
-@Set QUEUE_NAME_PREFIX=topics
-@Set EXCHANGE_NAME_PREFIX=topic_logs
-@Set PRODUCER_CLASS_PREFIX=EmitLogTopic
-@Set CONSUMER_CLASS_PREFIX=ReceiveLogsTopic
+@Set PACKAGE=projeto
+@Set QUEUE_NAME_PREFIX=game
+@Set EXCHANGE_NAME_PREFIX=game_moves
+@Rem PRODUCER_CLASS_PREFIX=Em
+@Rem CONSUMER_CLASS_PREFIX=ReceiveLogsTopic
 @Set OBSERVER_CLASS_PREFIX=ObserverGuiClient
 
 @REM ==== NETWORK STUFF ====

@@ -1,7 +1,12 @@
 package edu.ufp.inf.sd.rmi.project.client.jogo.engine;
 
+import edu.ufp.inf.sd.rmi.project.client.ObserverRI;
+import edu.ufp.inf.sd.rmi.project.server.SubjectImpl;
+import edu.ufp.inf.sd.rmi.project.server.SubjectRI;
+
 import java.awt.Dimension;
 import java.awt.Image;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -44,7 +49,6 @@ public class Game extends JFrame {
 	public static Image img_city;
 	public static Image img_exts;
 	public static Boolean readytopaint;
-	
 	//This handles the different edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.players and also is used to speed logic arrays (contains a list of all characters they own)
 	public static List<edu.ufp.inf.sd.rmi.project.client.jogo.players.Base> player = new ArrayList<edu.ufp.inf.sd.rmi.project.client.jogo.players.Base>();
 	public static List<edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Base> builds = new ArrayList<edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Base>();
@@ -53,8 +57,9 @@ public class Game extends JFrame {
 	public static List<edu.ufp.inf.sd.rmi.project.client.jogo.players.Base> displayC = new ArrayList<edu.ufp.inf.sd.rmi.project.client.jogo.players.Base>();
 	public static List<edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Base> displayB = new ArrayList<edu.ufp.inf.sd.rmi.project.client.jogo.buildings.Base>();
 	public static List<edu.ufp.inf.sd.rmi.project.client.jogo.units.Base> displayU = new ArrayList<edu.ufp.inf.sd.rmi.project.client.jogo.units.Base>();
-	
-	public Game() {super (name);
+	public static SubjectRI subject;
+	public static ObserverRI observer;
+	public Game(String mapa, SubjectRI subjectri, ObserverRI observerRI) throws RemoteException {super (name);
 		//Default Settings of the JFrame
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setSize(new Dimension(20*ScreenBase+6,12*ScreenBase+12));
@@ -68,17 +73,19 @@ public class Game extends JFrame {
 		add(gui);
 		gui.setFocusable(true);
 		gui.requestFocusInWindow();
-		
+		subject=subjectri;
+		observer=observerRI;
 		//load images, initialize the map, and adds the input settings.
 		load = new LoadImages();
 		map = new Map();//passar o mapa por argumento
-		input = new InputHandler();
-		list = new ListData();
-		
+		input = new InputHandler(subjectri);
+		list = new ListData(subjectri);
 		setVisible(true);//This has been moved down here so that when everything is done, it is shown.
-		gui.LoginScreen();
-		save.LoadSettings();
+		//gui.LoginScreen();
+		//save.LoadSettings();
+		begin(mapa);
 		GameLoop();
+
 	}
 
 	private void GameLoop() {
@@ -130,7 +137,15 @@ public class Game extends JFrame {
 			try { Thread.sleep(30);} catch (Exception e) {};
 		}
 	}
-	
+	//lançar jogo
+	public void begin(String mapa){
+		int plyer[]={0, 0, 0, 0};
+		 boolean npc[]={false, false, false, false};
+        Game.btl.NewGame(mapa);
+		Game.btl.AddCommanders(plyer, npc, 100, 50);
+		Game.gui.InGameScreen();
+	}
 	/**Starts a new game when launched.*/
-	public static void main(String args[]) throws Exception {new Game();}
+	public static void main(String args[]) throws Exception {//new Game();
+		 }
 }

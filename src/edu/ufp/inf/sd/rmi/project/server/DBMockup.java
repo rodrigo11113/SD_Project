@@ -23,8 +23,8 @@ public class DBMockup {
      * This constructor creates and inits the database with some books and users.
      */
     public DBMockup() {
-        users = new ArrayList<>();
-        games = new ArrayList<>();
+        this.users = new ArrayList<>();
+        this.games = new ArrayList<>();
     }
 
     /**
@@ -61,9 +61,9 @@ public class DBMockup {
     /**
      * Inserts a new game into the DigLib.
      */
-    public Game insert(int  max_players, String nivel) throws RemoteException {
+    public Game insert(int  max_players, String nivel,SubjectRI subjectRI) throws RemoteException {
 
-       Game game= new Game(max_players, nivel);
+       Game game= new Game(max_players, nivel,subjectRI);
         if(games.size()<1){
             game.setId(1);
         }else{

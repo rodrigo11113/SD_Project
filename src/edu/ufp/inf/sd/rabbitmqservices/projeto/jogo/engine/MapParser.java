@@ -143,7 +143,7 @@ public class MapParser {
 		CityString = "";
 		CityPoint = new Vector<Point>();
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(path + "/" + mapname + ".txt"));
+			BufferedReader in = new BufferedReader(new FileReader(mapname ));
 			String line;
 			while ((line = in.readLine()) != null) {
 				if (line.startsWith("1")) {

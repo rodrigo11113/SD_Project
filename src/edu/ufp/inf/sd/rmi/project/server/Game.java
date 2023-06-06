@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rmi.project.server;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
@@ -11,11 +12,13 @@ public class Game implements Serializable {
     private int num_players;
     private int max_players;
     private String nivel="";
+private SubjectRI subjectRI;
 
-    public Game( int max_players, String nivel) {
+    public Game( int max_players, String nivel,SubjectRI subjectRI) {
         this.max_players = max_players;
         this.nivel = nivel;
         this.num_players=1;
+        this.subjectRI= subjectRI;
     }
 
     public int getId() {
@@ -48,5 +51,13 @@ public class Game implements Serializable {
 
     public void setNivel(String nivel) {
         this.nivel = nivel;
+    }
+
+    public SubjectRI getSubjectRI() {
+        return subjectRI;
+    }
+
+    public void setSubjectRI(SubjectRI subjectRI) {
+        this.subjectRI = subjectRI;
     }
 }

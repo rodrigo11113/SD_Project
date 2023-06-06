@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,6 +14,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import edu.ufp.inf.sd.rmi.project.client.jogo.engine.Game;
+import edu.ufp.inf.sd.rmi.project.server.State;
 
 /**
  * Displays a list of available edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.units, and some information about them to buy.
@@ -92,9 +94,20 @@ public class City implements ActionListener,ListSelectionListener {
 	@Override public void actionPerformed(ActionEvent e) {
 		Object s = e.getSource();
 		if (s==Return) {MenuHandler.CloseMenu();}
-		else if (s==Buy) {
-			Game.btl.Buyunit(ids[Units.getSelectedIndex()], x, y);
-			MenuHandler.CloseMenu();
+		else if (s==Buy) {//setstate
+			State state = null;
+			try {
+				state = new State(Game.observer.getId(),"buy,"+ids[Units.getSelectedIndex()]+","+x+","+y);
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			try {
+				Game.subject.setState(state);
+			} catch (RemoteException remoteException) {
+				remoteException.printStackTrace();
+			}
+			/*Game.btl.Buyunit(ids[Units.getSelectedIndex()], x, y);
+			MenuHandler.CloseMenu();*/
 		}
 	}
 	@Override public void valueChanged(ListSelectionEvent e) {

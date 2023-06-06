@@ -19,15 +19,12 @@ import java.io.Serializable;
 public class State implements Serializable {
     private String msg;
     private String id;
-    //private edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.players.Base base_jogador;
-    //private edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.units.Base base_unidades;
-    //private edu.ufp.inf.sd.rmi.project.client.jogo.edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.Base base_buidling;
+
 
 
     /**
-     * 
-     * @param id
-     * @param m 
+     *  @param id
+     * @param m
      */
     public State(String id, String m) {
         this.id = id;

@@ -3,6 +3,7 @@ package edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.menus;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import javax.swing.JButton;
 import edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.engine.Game;
 
@@ -55,8 +56,17 @@ public class Pause implements ActionListener {
 			Game.gui.LoginScreen();
 		}
 		else if (s==EndTurn) {
-			MenuHandler.CloseMenu();
-			Game.btl.EndTurn();
+			try {
+				if(Game.observer.getGui().verificatoken(Game.observer.tokenholder)){
+				Game.observer.sendMessage("end turn");
+					//MenuHandler.CloseMenu();
+					}
+				else System.out.println("nao e a tua vez");
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
+			}
+			//MenuHandler.CloseMenu();
+			//Game.btl.EndTurn();
 		}
 		else if (s==Resume) {MenuHandler.CloseMenu();}
 		else if (s==Save) {Game.save.SaveGame();}

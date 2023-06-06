@@ -1,11 +1,12 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
-import edu.ufp.inf.sd.rmi.project.server.Game;
-import edu.ufp.inf.sd.rmi.project.server.GameFactoryImpl;
-import edu.ufp.inf.sd.rmi.project.server.GameFactoryRI;
-import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import edu.ufp.inf.sd.rmi.project.server.*;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 
+import java.io.UnsupportedEncodingException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -58,6 +59,9 @@ public class GameClient {
             "2-login.",
             "3- Sair",
     };
+    private static String[] options_game={"Esperando que os outros jogadores se conectem ",
+              "1-Sair do jogo"};
+
     public static void main(String[] args) {
         if (args != null && args.length < 2) {
             System.err.println("usage: java [options] edu.ufp.sd.inf.rmi._01_helloworld.server.HelloWorldClient <rmi_registry_ip> <rmi_registry_port> <service_name>");
@@ -117,6 +121,7 @@ public class GameClient {
             Scanner password2 = new Scanner(System.in);  // Create a Scanner object
             Scanner optioN = new Scanner(System.in); //create a Scanner object
             Scanner optioN2 = new Scanner(System.in); //create a Scanner object
+            Scanner optioN3 = new Scanner(System.in); //create a Scanner object
             String userName;
             String passWord;
             GameSessionRI gameSessionRI;
@@ -139,25 +144,46 @@ public class GameClient {
 
                     }
                     case 2 : {
+                        do{
                         System.out.println("Introduza o nome:");
                         userName = username2.nextLine();  // Read user input
                         System.out.println("Introduza a password:");
                         passWord = password2.nextLine();  // Read user input
-                         gameSessionRI=this.gameFactoryRI.login(userName,passWord);
-                         option = 1;
+                         gameSessionRI=this.gameFactoryRI.login(userName,passWord);}
+                        while(gameSessionRI==null);
+                        String token=GameServer.giveToken(userName);
+                        gameSessionRI.setToken(token);
+
+                        option = 1;
                         while (option!=4){
                             printMenu(options);
                             option = optioN2.nextInt();
                             switch (option) {
                                 case 1 : {
-                                    assert gameSessionRI != null;
 
-                                    criarjogo(gameSessionRI,"");
-                                     break;
+                                    criarjogo(gameSessionRI);
+                                     option =2;
+                                     while(option!=4){
+                                         printMenu(options_game);
+                                         option=optioN3.nextInt();
+                                         switch (option){
+                                             case 1:exit(0);
+                                         }
+                                          break;
+                                     }
                                 }
                                 case 2 : {
-                                    escolherjogo(gameSessionRI, "");
-                                    break;
+                                    escolherjogo(gameSessionRI);
+                                    option =2;
+                                    while(option!=4){
+                                        printMenu(options_game);
+                                        option=optioN3.nextInt();
+                                        switch (option){
+                                            case 1:exit(0);
+                                        }
+                                        break;
+                                    }
+
                                 }
                                 case 3 : exit(0);
                             }
@@ -165,6 +191,7 @@ public class GameClient {
                     }
                     case 3 : exit(0);
                 }
+
             }
 
 
@@ -175,40 +202,34 @@ public class GameClient {
     /**
      * Metodo para criar um jogo
      * @param gameSessionRI
-     * @param token
+
      * @return
      * @throws RemoteException
      */
-    private static Game criarjogo(GameSessionRI gameSessionRI, String token) throws RemoteException {
+    private static Game criarjogo(GameSessionRI gameSessionRI) throws RemoteException {
         Game game;
         Scanner mapa = new Scanner(System.in);
         System.out.println("Introduza o mapa :1-FourCorners 2-SmallVs");
         int mapas = mapa.nextInt();
+        //cria observer para o jogador
+        ObserverRI observerRI = new ObserverImpl(gameSessionRI.getUsername());
         if(mapas==1){
-             game= gameSessionRI.criar_jogo("FourCorners",4,"");
+             game= gameSessionRI.criar_jogo("C:\\Users\\ACER-PC\\IdeaProjects\\SD\\maps\\FourCorners.txt",4, gameSessionRI.getToken(), observerRI);
         }
         else{
-             game= gameSessionRI.criar_jogo("SmallVs",2,"");
+             game= gameSessionRI.criar_jogo("C:\\Users\\ACER-PC\\IdeaProjects\\SD\\maps\\SmallVs.txt",2, gameSessionRI.getToken(), observerRI);
         }
-        //chama o Create Game
-        //ObserverRI observerRI = new ObserverImpl(0);
 
-        //Game game = gameSessionRI.createGame(1,dif, max, observerRI, token);
-        //observerRI.setFroggerGameRI(game.getFroggerRI());
 
-       // while (observerRI.getFroggerGameRI().getFroggers().size() != game.getMaxPlayers()){
-        //}
-
-       // Main f = new Main(game, observerRI);
-       // f.run();
+        observerRI.setSubjectRI(game.getSubjectRI());
 
         System.out.println("Jogo criado com sucesso!");
 
         return game;
     }
-    private static void escolherjogo(GameSessionRI gameSessionRI, String token) throws RemoteException{
+    private static void escolherjogo(GameSessionRI gameSessionRI) throws RemoteException{
         System.out.println("Lista dos jogos disponiveis:");
-        //chama o listFroggerGames
+
         assert gameSessionRI != null;
         ArrayList<Game> games =  gameSessionRI.listAvbGames();
          for (Game game:games){
@@ -218,20 +239,15 @@ public class GameClient {
         System.out.println("Escolha um jogo para se juntar:");
         int jogo = escolherJogo.nextInt();
 
-        //ObserverRI observerRI = new ObserverImpl(1);
+        ObserverRI observerRI = new ObserverImpl(gameSessionRI.getUsername());
 
-        //chama o Choose Game
-        Game game = gameSessionRI.escolher_jogo(jogo, token);
-        //observerRI.setFroggerGameRI(game.getFroggerRI());
-
-
-       // while (observerRI.getFroggerGameRI().getFroggers().size() != game.getMaxPlayers()){
-       // }
-
-        System.out.println("Bom Jogo!");
-       // Main f = new Main(game, observerRI);
-       // f.run();
-
+        //chama o escolher jogo
+        Game game = gameSessionRI.escolher_jogo(jogo, gameSessionRI.getToken(), observerRI);
+        observerRI.setSubjectRI(game.getSubjectRI());
+        game.getSubjectRI().attach(observerRI);
+       game.getSubjectRI().setMapa(game.getNivel());
 
     }
+
+    private static void comecar_jogo() throws RemoteException{}
 }

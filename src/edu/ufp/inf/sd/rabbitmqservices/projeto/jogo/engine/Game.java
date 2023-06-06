@@ -1,5 +1,7 @@
 package edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.engine;
 
+import edu.ufp.inf.sd.rabbitmqservices.projeto.chatgui.Observer;
+
 import java.awt.Dimension;
 import java.awt.Image;
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class Game extends JFrame {
 	public static Image img_city;
 	public static Image img_exts;
 	public static Boolean readytopaint;
-	
+	public static Observer observer;
 	//This handles the different edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.players and also is used to speed logic arrays (contains a list of all characters they own)
 	public static List<edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.players.Base> player = new ArrayList<edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.players.Base>();
 	public static List<edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.Base> builds = new ArrayList<edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.Base>();
@@ -54,7 +56,7 @@ public class Game extends JFrame {
 	public static List<edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.Base> displayB = new ArrayList<edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.buildings.Base>();
 	public static List<edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.units.Base> displayU = new ArrayList<edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.units.Base>();
 	
-	public Game() {super (name);
+	public Game(String mapa,Observer observer1) {super (name);
 		//Default Settings of the JFrame
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setSize(new Dimension(20*ScreenBase+6,12*ScreenBase+12));
@@ -74,10 +76,11 @@ public class Game extends JFrame {
 		map = new Map();
 		input = new InputHandler();
 		list = new ListData();
-		
+		observer= observer1;
 		setVisible(true);//This has been moved down here so that when everything is done, it is shown.
-		gui.LoginScreen();
-		save.LoadSettings();
+		//gui.LoginScreen();
+		//save.LoadSettings();
+		begin(mapa);
 		GameLoop();
 	}
 
@@ -130,7 +133,17 @@ public class Game extends JFrame {
 			try { Thread.sleep(30);} catch (Exception e) {};
 		}
 	}
-	
+	public void begin(String mapa){
+		int plyer[]={0, 0, 0, 0};
+		boolean npc[]={false, false, false, false};
+		Game.btl.NewGame(mapa);
+		Game.btl.AddCommanders(plyer, npc, 100, 50);
+		Game.gui.InGameScreen();
+
+	}
 	/**Starts a new game when launched.*/
-	public static void main(String args[]) throws Exception {new Game();}
+	public static void main(String args[]) throws Exception {
+		//por as funçoes do jogo
+		//new Game();
+	}
 }

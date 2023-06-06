@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.rmi.RemoteException;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,6 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.engine.Game;
+import edu.ufp.inf.sd.rmi.project.server.State;
 
 /**
  * Displays a list of available edu.ufp.inf.sd.rabbitmqservices.projeto.jogo.units, and some information about them to buy.
@@ -93,8 +96,16 @@ public class City implements ActionListener,ListSelectionListener {
 		Object s = e.getSource();
 		if (s==Return) {MenuHandler.CloseMenu();}
 		else if (s==Buy) {
-			Game.btl.Buyunit(ids[Units.getSelectedIndex()], x, y);
-			MenuHandler.CloseMenu();
+
+			try {
+				if(Game.observer.getGui().verificatoken(Game.observer.tokenholder)){
+				Game.observer.sendMessage("buy,"+ids[Units.getSelectedIndex()]+","+x+","+y);}
+				else System.out.println("nao e a tua vez");
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
+			}
+			//Game.btl.Buyunit(ids[Units.getSelectedIndex()], x, y);
+			//MenuHandler.CloseMenu();
 		}
 	}
 	@Override public void valueChanged(ListSelectionEvent e) {
